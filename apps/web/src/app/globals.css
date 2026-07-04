@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-paper text-ink antialiased;
+}
+
+.card {
+  @apply bg-white border border-ink/10 rounded-xl;
+}
+
+.btn {
+  @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-ink text-sm font-medium
+    hover:bg-ink hover:text-white transition-colors;
+}
+
+.btn-accent {
+  @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-ink text-sm font-semibold
+    hover:bg-accentDark transition-colors border border-transparent;
+}
+
+.chip {
+  @apply inline-flex items-center gap-1 px-3 py-1 rounded-full border border-ink/20 bg-white text-xs;
+}
+
+.delta-up { @apply text-emerald-600 font-semibold; }
+.delta-down { @apply text-red-500 font-semibold; }

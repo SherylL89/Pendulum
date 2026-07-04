@@ -1,0 +1,25 @@
+# deps
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# builds
+.next/
+dist/
+build/
+
+# env & secrets
+.env
+.env.local
+*.env
+
+# db & artifacts
+*.db
+*.sqlite3
+uploads/
+
+# os / editor
+.DS_Store
+.vscode/
+.idea/
