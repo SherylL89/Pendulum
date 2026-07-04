@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { API_BASE } from "@/lib/api";
 
 const NAV = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/performance", label: "Performance" },
   { href: "/collections", label: "Collection" },
-  { href: "/newsletter", label: "Newsletter Tracking", badge: 2 },
+  { href: "/newsletter", label: "Newsletter Tracking", badgeKey: "unread" },
   { href: "/trends", label: "Trend Report" },
   { href: "/find-similar", label: "Find Similar" },
   { href: "/team", label: "Team" },
@@ -15,6 +17,13 @@ const NAV = [
 
 export default function Sidebar() {
   const path = usePathname();
+  const [unread, setUnread] = useState(0);
+  useEffect(() => {
+    fetch(`${API_BASE}/newsletters/unread-count`)
+      .then((r) => r.json())
+      .then((d) => setUnread(d.count))
+      .catch(() => setUnread(0));
+  }, [path]);
   if (path === "/onboarding") return null;
   return (
     <aside className="w-60 shrink-0 min-h-screen border-r border-ink/10 bg-white flex flex-col">
@@ -24,6 +33,7 @@ export default function Sidebar() {
       <nav className="px-3 space-y-1">
         {NAV.map((n) => {
           const active = path.startsWith(n.href);
+          const badge = n.badgeKey === "unread" ? unread : 0;
           return (
             <Link
               key={n.href}
@@ -33,9 +43,9 @@ export default function Sidebar() {
               }`}
             >
               {n.label}
-              {n.badge ? (
-                <span className="ml-2 h-5 w-5 grid place-items-center rounded-full bg-accent text-ink text-[11px] font-bold">
-                  {n.badge}
+              {badge > 0 ? (
+                <span className="ml-2 h-5 min-w-5 px-1 grid place-items-center rounded-full bg-accent text-ink text-[11px] font-bold">
+                  {badge > 99 ? "99+" : badge}
                 </span>
               ) : null}
             </Link>

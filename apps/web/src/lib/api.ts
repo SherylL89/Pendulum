@@ -31,4 +31,7 @@ export type ProductT = {
   id: number; name: string; brand: string; retailer: string; category: string;
   price: number; change_pct: number; sales_rank: number; review_rank: number;
   launch_date: string; attrs: Record<string, unknown>; image_hue: number;
+  image_url?: string;
 };
+
+export const API_BASE = BASE;

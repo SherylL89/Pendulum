@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api, post } from "@/lib/api";
+import { API_BASE, api, post } from "@/lib/api";
 
 type Report = { id: number; title: string; kind: string; season: string; summary: string; body: string };
 
@@ -50,7 +50,12 @@ export default function Trends() {
             <div className="text-xs uppercase tracking-wide text-ink/40">{r.season}</div>
             <div className="font-semibold leading-snug">{r.title}</div>
             <p className="text-sm text-ink/60">{r.summary}</p>
-            <button onClick={() => setOpen(r)} className="btn !px-3 !py-1.5 mt-2">View detail</button>
+            <div className="flex items-center gap-3 mt-2">
+              <button onClick={() => setOpen(r)} className="btn !px-3 !py-1.5">View detail</button>
+              <a href={`${API_BASE}/trends/${r.id}/pdf`} className="text-sm text-accentDark font-medium hover:underline">
+                ↓ PDF
+              </a>
+            </div>
           </div>
         ))}
       </div>

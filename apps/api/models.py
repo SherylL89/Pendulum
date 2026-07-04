@@ -39,6 +39,9 @@ class Product(Base):
     launch_date: Mapped[str] = mapped_column(String(20), default="")
     attrs: Mapped[dict] = mapped_column(JSON, default=dict)           # size, style, material, colors
     image_hue: Mapped[int] = mapped_column(Integer, default=0)        # placeholder art seed
+    image_url: Mapped[str] = mapped_column(String(500), default="")   # R2 public URL when scraped
+    feedback_cache: Mapped[dict] = mapped_column(JSON, default=dict)  # cached sentiment analysis
+    feedback_hash: Mapped[str] = mapped_column(String(64), default="")  # hash of reviews at cache time
 
     prices: Mapped[list["PricePoint"]] = relationship(back_populates="product")
     reviews: Mapped[list["Review"]] = relationship(back_populates="product")
@@ -81,6 +84,15 @@ class Newsletter(Base):
     kind: Mapped[str] = mapped_column(String(50))  # Sales Promotions | New Product | Editorial | Others
     received_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     body: Mapped[str] = mapped_column(Text, default="")
+    read: Mapped[int] = mapped_column(Integer, default=0)  # 0 unread / 1 read
+
+
+class ScrapeRun(Base):
+    __tablename__ = "scrape_runs"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    ran_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    mode: Mapped[str] = mapped_column(String(20), default="live")  # live | demo-drift
+    items: Mapped[int] = mapped_column(Integer, default=0)
 
 
 class TrendReport(Base):

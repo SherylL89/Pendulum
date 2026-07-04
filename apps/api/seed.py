@@ -39,10 +39,21 @@ NL_SUBJECTS = [
 ]
 
 
-def run():
-    Base.metadata.drop_all(engine)
+def run(reset: bool = False):
+    """Safe by default: refuses to wipe a database that already has data.
+    Use `python seed.py --reset` to force a full reseed (destroys scraped history!)."""
     Base.metadata.create_all(engine)
     db = SessionLocal()
+    existing = db.query(Product).count()
+    if existing and not reset:
+        print(f"Database already has {existing} products — skipping seed. Use --reset to wipe and reseed.")
+        db.close()
+        return
+    if reset:
+        db.close()
+        Base.metadata.drop_all(engine)
+        Base.metadata.create_all(engine)
+        db = SessionLocal()
 
     admin = User(name="Yiren Xu", email="yiren@pendulum.com", role="admin")
     members = [User(name=n, email=e) for n, e in [
@@ -123,4 +134,6 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    import sys
+
+    run(reset="--reset" in sys.argv)

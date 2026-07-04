@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { API_BASE, api, post } from "@/lib/api";
 
-type NL = { id: number; brand: string; subject: string; kind: string; received_at: string };
+type NL = { id: number; brand: string; subject: string; kind: string; received_at: string; read?: boolean };
 type Resp = { brands: string[]; items: NL[] };
 
 const KINDS = ["Sales Promotions", "New Product Announcement", "Editorial / Blogs", "Others"];
@@ -38,18 +38,34 @@ export default function Newsletter() {
 
       <div className="grid grid-cols-3 gap-4">
         {data.items.map((n) => (
-          <div key={n.id} className="card p-5 space-y-2 hover:shadow-md transition-shadow">
+          <div
+            key={n.id}
+            onClick={() => {
+              if (!n.read) {
+                post(`/newsletters/${n.id}/read`);
+                setData((d) => ({ ...d, items: d.items.map((x) => (x.id === n.id ? { ...x, read: true } : x)) }));
+              }
+            }}
+            className={`card p-5 space-y-2 hover:shadow-md transition-shadow cursor-pointer ${n.read ? "opacity-60" : ""}`}
+          >
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-full bg-ink text-white grid place-items-center text-xs font-bold">
                 {n.brand[0]}
               </div>
               <div>
-                <div className="font-medium text-sm">{n.brand}</div>
+                <div className="font-medium text-sm">{n.brand} {!n.read && <span className="inline-block h-2 w-2 rounded-full bg-accentDark ml-1" />}</div>
                 <div className="text-xs text-ink/40">{new Date(n.received_at).toLocaleString()}</div>
               </div>
             </div>
             <span className="chip">{n.kind}</span>
             <div className="font-semibold leading-snug">{n.subject}</div>
+            <a
+              href={`${API_BASE}/newsletters/${n.id}/pdf`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-sm text-accentDark font-medium hover:underline inline-block"
+            >
+              ↓ Download PDF
+            </a>
           </div>
         ))}
       </div>

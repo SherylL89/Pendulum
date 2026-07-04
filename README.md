@@ -38,15 +38,30 @@ cp .env.example .env      # optionally add ANTHROPIC_API_KEY
 docker compose up --build # web :3000, api :8000, postgres :5432
 ```
 
-## AI features
+## AI & data features
 
-Set `ANTHROPIC_API_KEY` in `.env` (or apps/api/.env) to enable:
+Everything degrades gracefully — with no keys configured the app runs fully on fallbacks.
 
-- **Feedback analysis** — sentiment extraction from product reviews
-- **Image tagging** — upload a product photo, get category/color/style/material
-- **Trend reports** — agentic generation: query aggregates → draft → verify → publish
+| Feature | Powered by | Env vars |
+|---|---|---|
+| Feedback sentiment (cached per product) | Claude | `ANTHROPIC_API_KEY` |
+| Image tagging (Find Similar upload) | Claude vision | `ANTHROPIC_API_KEY` |
+| Trend agent (gather → draft → verify → publish, retries) | Claude | `ANTHROPIC_API_KEY` |
+| Vector similarity search | pgvector + Voyage/OpenAI embeddings | `VECTOR_DATABASE_URL`, `VOYAGE_API_KEY` |
+| Agentic scraper (selector-free extraction) | Claude + httpx | `SCRAPE_SOURCES`, `ANTHROPIC_API_KEY` |
+| Newsletter inbox ingestion + classification | IMAP + Claude | `IMAP_HOST/USER/PASSWORD` |
+| Product images | Cloudflare R2 | `R2_*` |
+| Schedules (daily snapshot, 30-min IMAP, weekly trend) | APScheduler | `ENABLE_SCHEDULER=1` |
 
-Without a key, these endpoints return deterministic fallback data so the UI still works.
+See `.env.example` for the full list. Recommended production setup: AWS RDS for
+`DATABASE_URL`, Supabase for `VECTOR_DATABASE_URL` (run `POST /admin/backfill-embeddings`
+once after connecting), Cloudflare R2 for images.
+
+**Ops endpoints:** `POST /admin/snapshot` (manual ingestion run), `POST /newsletters/poll`
+(IMAP fetch), `POST /admin/backfill-embeddings`.
+
+**Seeding is safe:** `python seed.py` refuses to touch a non-empty database; use
+`--reset` only when you intend to wipe scraped history.
 
 ## Repo layout
 

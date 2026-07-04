@@ -1,6 +1,9 @@
-/** Placeholder product visual: a flat color block derived from the product's hue seed.
- *  Swap for real images once ingestion provides them. */
-export default function Swatch({ hue, className = "" }: { hue: number; className?: string }) {
+/** Product visual: real image when ingestion has stored one (R2), hue swatch otherwise. */
+export default function Swatch({ hue, src, className = "" }: { hue: number; src?: string; className?: string }) {
+  if (src) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={src} alt="" className={`rounded-lg object-cover ${className}`} />;
+  }
   return (
     <div
       className={`rounded-lg ${className}`}
