@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Logo from "@/components/Logo";
 
 const STEPS = ["Basic Information", "Research Preference", "Competitor & Inspirational Brands", "Price"];
 const CATEGORIES: Record<string, string[]> = {
@@ -34,7 +35,9 @@ export default function Onboarding() {
 
   return (
     <div className="min-h-screen bg-paper">
-      <header className="bg-ink text-white text-center py-4 font-display text-2xl font-bold">Pendulum</header>
+      <header className="bg-ink py-4 grid place-items-center">
+        <Logo className="text-2xl" light />
+      </header>
       <div className="max-w-3xl mx-auto px-6 py-10 space-y-10">
         {/* chevron progress */}
         <div className="flex">

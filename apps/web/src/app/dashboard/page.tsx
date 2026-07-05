@@ -59,9 +59,9 @@ export default async function Dashboard() {
 
 function Stat({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
   return (
-    <div className={`card p-5 ${accent ? "bg-accent border-transparent" : ""}`}>
-      <div className="text-sm text-ink/50">{label}</div>
-      <div className="font-display text-3xl font-bold mt-1">{value.toLocaleString()}</div>
+    <div className={`card p-5 ${accent ? "bg-accent border-transparent text-white" : ""}`}>
+      <div className={`text-sm ${accent ? "text-white/70" : "text-ink/50"}`}>{label}</div>
+      <div className="font-display text-3xl font-extrabold mt-1">{value.toLocaleString()}</div>
     </div>
   );
 }

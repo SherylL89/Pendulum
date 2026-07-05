@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { API_BASE } from "@/lib/api";
+import Logo from "./Logo";
 
 const NAV = [
   { href: "/dashboard", label: "Dashboard" },
@@ -27,8 +28,8 @@ export default function Sidebar() {
   if (path === "/onboarding") return null;
   return (
     <aside className="w-60 shrink-0 min-h-screen border-r border-ink/10 bg-white flex flex-col">
-      <Link href="/dashboard" className="px-6 py-5 font-display text-2xl font-bold tracking-tight">
-        Pendulum<span className="text-accentDark">.</span>
+      <Link href="/dashboard" className="px-6 py-5">
+        <Logo className="text-2xl" />
       </Link>
       <nav className="px-3 space-y-1">
         {NAV.map((n) => {
@@ -44,7 +45,7 @@ export default function Sidebar() {
             >
               {n.label}
               {badge > 0 ? (
-                <span className="ml-2 h-5 min-w-5 px-1 grid place-items-center rounded-full bg-accent text-ink text-[11px] font-bold">
+                <span className="ml-2 h-5 min-w-5 px-1 grid place-items-center rounded-full bg-accent text-white text-[11px] font-bold">
                   {badge > 99 ? "99+" : badge}
                 </span>
               ) : null}

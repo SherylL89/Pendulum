@@ -41,7 +41,7 @@ export default function PriceChart({
           <YAxis tick={{ fontSize: 11 }} domain={["auto", "auto"]} />
           <Tooltip />
           <Line type="monotone" dataKey="brand_price" name="Brand" stroke="#141414" strokeWidth={2} dot={false} />
-          <Line type="monotone" dataKey="retailer_price" name="Retailer" stroke="#7fb332" strokeWidth={2} dot={false} />
+          <Line type="monotone" dataKey="retailer_price" name="Retailer" stroke="#4633E8" strokeWidth={2} dot={false} />
         </LineChart>
       </ResponsiveContainer>
       </div>

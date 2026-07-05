@@ -16,7 +16,7 @@ body {
 }
 
 .btn-accent {
-  @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-ink text-sm font-semibold
+  @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-white text-sm font-semibold
     hover:bg-accentDark transition-colors border border-transparent;
 }
 

@@ -14,7 +14,7 @@ export default function CategoryChart({ data }: { data: { category: string; coun
           <Tooltip formatter={(v: number, n: string) => [n === "avg_change" ? `${v}%` : v, n === "avg_change" ? "avg change" : "items"]} />
           <Bar dataKey="avg_change" radius={[6, 6, 0, 0]}>
             {rows.map((r, i) => (
-              <Cell key={i} fill={r.avg_change >= 0 ? "#b7f34d" : "#141414"} />
+              <Cell key={i} fill={r.avg_change >= 0 ? "#4633E8" : "#141414"} />
             ))}
           </Bar>
         </BarChart>

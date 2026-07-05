@@ -58,7 +58,7 @@ export default async function ProductDetail({ params }: { params: { id: string }
           {p.feedback.aspects.map((a) => (
             <div key={a.aspect} className="border border-ink/10 rounded-lg p-4">
               <div className="font-medium mb-2">{a.aspect}</div>
-              <div className="h-2 rounded-full bg-red-200 overflow-hidden">
+              <div className="h-2 rounded-full bg-ink/10 overflow-hidden">
                 <div className="h-full bg-accent" style={{ width: `${a.positive}%` }} />
               </div>
               <div className="flex justify-between text-xs mt-1 text-ink/50">

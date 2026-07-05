@@ -7,12 +7,12 @@ export default {
       colors: {
         ink: "#141414",
         paper: "#faf9f6",
-        accent: "#b7f34d", // acid green — Pendulum's creative signature
-        accentDark: "#7fb332",
+        accent: "#4633E8", // Pendulum brand indigo-violet
+        accentDark: "#3524B8",
       },
       fontFamily: {
-        display: ["Georgia", "Times New Roman", "serif"],
-        sans: ["-apple-system", "Segoe UI", "Helvetica Neue", "sans-serif"],
+        display: ["Nunito", "Nunito Sans", "sans-serif"], // wordmark & headings (matches wireframes)
+        sans: ["Nunito Sans", "-apple-system", "Segoe UI", "sans-serif"],
       },
     },
   },
