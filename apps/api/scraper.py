@@ -44,12 +44,27 @@ def _load_sources() -> list[dict]:
 SOURCES: list[dict] = _load_sources()
 
 
-def extract_products(page_text: str, brand: str, category: str) -> list[dict]:
-    """Claude turns raw page text into structured products. Empty list if no key."""
+import re
+
+
+def _clean_html(html: str) -> str:
+    """Strip HTML to readable text so the extraction budget is spent on content,
+    not scripts. Keeps image URLs inline as [IMG url] markers."""
+    html = re.sub(r"<(script|style|noscript|svg)[^>]*>.*?</\1>", " ", html, flags=re.S | re.I)
+    html = re.sub(r"<img[^>]+src=[\"']([^\"']+)[\"'][^>]*>", r" [IMG \1] ", html, flags=re.I)
+    html = re.sub(r"<a[^>]+href=[\"']([^\"']+)[\"'][^>]*>", r" ", html, flags=re.I)
+    html = re.sub(r"<[^>]+>", " ", html)
+    html = html.replace("&amp;", "&").replace("&nbsp;", " ").replace("&quot;", '"').replace("&#39;", "'")
+    return re.sub(r"\s+", " ", html).strip()
+
+
+def extract_products(page_html: str, brand: str, category: str) -> list[dict]:
+    """Claude turns cleaned page text into structured products. Empty list if no key."""
     client = ai._client()
     if client is None:
         return []
     try:
+        text_in = _clean_html(page_html)
         msg = client.messages.create(
             model=ai.MODEL,
             max_tokens=3000,
@@ -57,9 +72,10 @@ def extract_products(page_text: str, brand: str, category: str) -> list[dict]:
             messages=[{
                 "role": "user",
                 "content": (
-                    "Extract fashion products from this page text. Return JSON list: "
+                    "Extract fashion products from this listing page text. [IMG url] markers are "
+                    "product images — pair each product with the nearest one. Return JSON list: "
                     '[{"name":str,"price":float,"image_url":str|null,"colors":[str],"material":str|null}]. '
-                    "Max 20 items.\n\n" + page_text[:30000]
+                    "Max 20 items. Skip navigation/menu items; products have prices.\n\n" + text_in[:40000]
                 ),
             }],
         )
@@ -124,7 +140,9 @@ def snapshot() -> dict:
             for src in SOURCES:
                 try:
                     page = httpx.get(src["url"], timeout=30, follow_redirects=True,
-                                     headers={"User-Agent": "Mozilla/5.0 (compatible; PendulumBot/1.0)"}).text
+                                     headers={"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                                              "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
+                                              "Accept-Language": "en-US,en;q=0.9"}).text
                     items = extract_products(page, src["brand"], src["category"])
                     for item in items:
                         _upsert_product(db, item, src["brand"], src["category"], today)
