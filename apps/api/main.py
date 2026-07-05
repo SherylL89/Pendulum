@@ -42,7 +42,9 @@ def dashboard(db: Session = Depends(get_db)):
     pref = db.scalar(select(Preference).limit(1))
     total = db.scalar(select(func.count(Product.id)))
     new_items = db.scalar(select(func.count(Product.id)).where(Product.change_pct > 0))
-    top = db.scalars(select(Product).order_by(Product.change_pct.desc()).limit(8)).all()
+    # biggest absolute movers first; newest arrivals break ties (e.g. day one, all 0%)
+    top = db.scalars(select(Product).order_by(
+        func.abs(Product.change_pct).desc(), Product.launch_date.desc()).limit(8)).all()
     by_cat = db.execute(
         select(Product.category, func.count(Product.id), func.avg(Product.change_pct))
         .group_by(Product.category)
