@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-[#f4f4f2] text-ink antialiased;
+  @apply bg-paper text-ink antialiased;
 }
 
 .card {

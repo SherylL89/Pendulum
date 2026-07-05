@@ -6,7 +6,7 @@ export default {
     extend: {
       colors: {
         ink: "#141414",
-        paper: "#faf9f6",
+        paper: "#F7F8FA", // porcelain — cool near-white content background
         accent: "#4633E8", // Pendulum brand indigo-violet
         accentDark: "#3524B8",
       },
