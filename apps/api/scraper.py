@@ -22,9 +22,26 @@ from db import SessionLocal
 from models import PricePoint, Product, ScrapeRun
 
 # Configure real sources here. selector-free: Claude reads the page text.
-SOURCES: list[dict] = json.loads(os.environ.get("SCRAPE_SOURCES", "[]"))
 # Example:
 # SCRAPE_SOURCES='[{"brand":"Zara","url":"https://www.zara.com/us/en/woman-bags-l1024.html","category":"Woman - Accessories - Bag"}]'
+
+
+def _load_sources() -> list[dict]:
+    raw = os.environ.get("SCRAPE_SOURCES", "[]").strip()
+    try:
+        parsed = json.loads(raw)
+        if isinstance(parsed, dict):  # single entry without brackets — accept it
+            return [parsed]
+        if isinstance(parsed, list):
+            return [s for s in parsed if isinstance(s, dict) and s.get("url")]
+        print(f"WARNING: SCRAPE_SOURCES must be a JSON list, got {type(parsed).__name__}; ignoring.")
+    except json.JSONDecodeError as e:
+        print(f"WARNING: SCRAPE_SOURCES is not valid JSON ({e}); ignoring. "
+              'Expected: [{"brand":"...","url":"https://...","category":"..."}]')
+    return []
+
+
+SOURCES: list[dict] = _load_sources()
 
 
 def extract_products(page_text: str, brand: str, category: str) -> list[dict]:
