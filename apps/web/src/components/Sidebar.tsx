@@ -27,7 +27,7 @@ export default function Sidebar() {
   }, [path]);
   if (path === "/onboarding") return null;
   return (
-    <aside className="w-60 shrink-0 min-h-screen bg-[#e3e3e3] flex flex-col">
+    <aside className="w-60 shrink-0 min-h-screen bg-white border-r border-ink/10 flex flex-col">
       <Link href="/dashboard" className="px-6 h-16 flex items-center">
         <Logo className="text-2xl" />
       </Link>
