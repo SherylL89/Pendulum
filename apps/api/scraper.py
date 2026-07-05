@@ -97,8 +97,16 @@ def parse_shopify(payload: dict) -> list[dict]:
             continue
         tags = p.get("tags") or []
         tags = tags if isinstance(tags, list) else [t.strip() for t in tags.split(",")]
-        colors = [t.split(" ", 1)[1].title() for t in tags if t.lower().startswith("color-family ")]
-        materials = [t.split(" ", 1)[1].title() for t in tags if t.lower().startswith("material-name ")]
+        # tag dialects vary by store: "color-family GREEN", "color-brown", "color: Orange"
+        colors, materials = [], []
+        for t in tags:
+            m = re.match(r"^colou?r(?:-family)?[-: ]\s*(.+)$", t, re.I)
+            if m:
+                colors.append(m.group(1).strip().title())
+                continue
+            m = re.match(r"^(?:material(?:-name)?|fabric)[-: ]\s*(.+)$", t, re.I)
+            if m:
+                materials.append(m.group(1).strip().title())
         images = p.get("images") or []
         items.append({
             "name": p["title"], "price": price,
