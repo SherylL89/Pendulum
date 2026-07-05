@@ -350,6 +350,25 @@ def admin_backfill():
     return {"embedded": scraper.backfill_embeddings()}
 
 
+@app.post("/admin/purge-demo")
+def purge_demo(db: Session = Depends(get_db)):
+    """Remove seeded demo products (and their history/reviews) so dashboards
+    reflect only genuinely scraped data. Real scraped products are kept."""
+    demo = db.scalars(select(Product)).all()
+    demo = [p for p in demo if (p.attrs or {}).get("size") == "13cm*13cm*4cm"]  # seed marker
+    ids = [p.id for p in demo]
+    if ids:
+        db.query(PricePoint).filter(PricePoint.product_id.in_(ids)).delete(synchronize_session=False)
+        db.query(Review).filter(Review.product_id.in_(ids)).delete(synchronize_session=False)
+        for c in db.scalars(select(Collection)).all():
+            c.product_ids = [x for x in (c.product_ids or []) if x not in ids]
+        for p in demo:
+            db.delete(p)
+        db.commit()
+    remaining = db.scalar(select(func.count(Product.id)))
+    return {"purged": len(ids), "remaining_products": remaining}
+
+
 # ---------- team ----------
 
 class InviteIn(BaseModel):
