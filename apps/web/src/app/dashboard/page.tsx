@@ -35,7 +35,7 @@ export default async function Dashboard() {
 
       <div className="grid grid-cols-3 gap-4">
         <Stat label="All items" value={d.stats.all_items} />
-        <Stat label="New items" value={d.stats.new_items} accent />
+        <Stat label="New items" value={d.stats.new_items} />
         <Stat label="Sales items" value={d.stats.sales_items} />
       </div>
 
@@ -57,10 +57,10 @@ export default async function Dashboard() {
   );
 }
 
-function Stat({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
+function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className={`card p-5 ${accent ? "bg-accent border-transparent text-white" : ""}`}>
-      <div className={`text-sm ${accent ? "text-white/70" : "text-ink/50"}`}>{label}</div>
+    <div className="card p-5">
+      <div className="text-sm text-ink/50">{label}</div>
       <div className="font-display text-3xl font-extrabold mt-1">{value.toLocaleString()}</div>
     </div>
   );

@@ -27,11 +27,11 @@ export default function Sidebar() {
   }, [path]);
   if (path === "/onboarding") return null;
   return (
-    <aside className="w-60 shrink-0 min-h-screen border-r border-ink/10 bg-white flex flex-col">
-      <Link href="/dashboard" className="px-6 py-5">
+    <aside className="w-60 shrink-0 min-h-screen bg-[#e3e3e3] flex flex-col">
+      <Link href="/dashboard" className="px-6 h-16 flex items-center">
         <Logo className="text-2xl" />
       </Link>
-      <nav className="px-3 space-y-1">
+      <nav className="px-6 py-6 space-y-1">
         {NAV.map((n) => {
           const active = path.startsWith(n.href);
           const badge = n.badgeKey === "unread" ? unread : 0;
@@ -39,8 +39,8 @@ export default function Sidebar() {
             <Link
               key={n.href}
               href={n.href}
-              className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm ${
-                active ? "bg-ink text-white font-medium" : "hover:bg-ink/5"
+              className={`flex items-center justify-between py-2.5 text-[15px] transition-colors ${
+                active ? "font-bold text-ink" : "text-ink/70 hover:text-ink"
               }`}
             >
               {n.label}
