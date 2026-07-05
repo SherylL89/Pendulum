@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { API_BASE } from "@/lib/api";
 
-/** On-demand ingestion: triggers a scrape/snapshot run and refreshes the page data. */
+/** On-demand ingestion: triggers a scrape/snapshot run, then hard-reloads for fresh data. */
 export default function SnapshotButton() {
-  const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
 
@@ -18,10 +16,11 @@ export default function SnapshotButton() {
       const d = await res.json();
       setMsg(
         d.mode === "live"
-          ? `Scraped ${d.items} products from live sources`
-          : `Updated ${d.items} products (demo mode — add SCRAPE_SOURCES for live scraping)`
+          ? `Scraped ${d.items} products — reloading…`
+          : `Updated ${d.items} products (demo mode) — reloading…`
       );
-      router.refresh();
+      setTimeout(() => window.location.reload(), 800);
+      return;
     } catch {
       setMsg("Refresh failed — is the API reachable?");
     }

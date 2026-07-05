@@ -148,7 +148,7 @@ def _demo_drift(db, today: str) -> int:
     n = 0
     for p in db.query(Product).all():
         promo = "20% off" if random.random() < 0.04 else ""
-        new_price = max(10, round(p.price * random.uniform(0.97, 1.02), 0))
+        new_price = max(10, round(p.price * random.uniform(0.98, 1.02), 0))  # symmetric drift
         p.change_pct = round((new_price - p.price) / p.price * 100, 2)
         p.price = new_price
         db.add(PricePoint(product_id=p.id, date=today,
