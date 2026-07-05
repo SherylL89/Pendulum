@@ -71,10 +71,10 @@ def _upsert_product(db, item: dict, brand: str, category: str, today: str) -> in
         try:
             data = httpx.get(item["image_url"], timeout=15).content
             url = storage.store_image(data)
-            if url:
-                p.image_url = url
+            # R2 copy when configured; otherwise hotlink the source image directly
+            p.image_url = url or item["image_url"]
         except Exception:
-            pass
+            p.image_url = item["image_url"]
     db.add(PricePoint(product_id=p.id, date=today, brand_price=item["price"],
                       retailer_price=item["price"], promo=item.get("promo", "")))
     embeddings.upsert(p.id, embeddings.embed_text(embeddings.product_text(p)))
