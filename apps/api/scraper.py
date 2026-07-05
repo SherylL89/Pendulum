@@ -87,6 +87,27 @@ def extract_products(page_html: str, brand: str, category: str) -> list[dict]:
         return []
 
 
+def parse_shopify(payload: dict) -> list[dict]:
+    """Shopify /products.json → our product schema. No AI needed — the data is structured."""
+    items = []
+    for p in payload.get("products", [])[:40]:
+        variants = p.get("variants") or [{}]
+        price = float(variants[0].get("price") or 0)
+        if not p.get("title") or price <= 0:
+            continue
+        tags = p.get("tags") or []
+        tags = tags if isinstance(tags, list) else [t.strip() for t in tags.split(",")]
+        colors = [t.split(" ", 1)[1].title() for t in tags if t.lower().startswith("color-family ")]
+        materials = [t.split(" ", 1)[1].title() for t in tags if t.lower().startswith("material-name ")]
+        images = p.get("images") or []
+        items.append({
+            "name": p["title"], "price": price,
+            "image_url": images[0]["src"] if images else None,
+            "colors": colors, "material": materials[0] if materials else None,
+        })
+    return items
+
+
 def _upsert_product(db, item: dict, brand: str, category: str, today: str) -> int:
     p = db.query(Product).filter_by(name=item["name"], brand=brand).first()
     if p is None:
@@ -139,11 +160,14 @@ def snapshot() -> dict:
         if SOURCES:
             for src in SOURCES:
                 try:
-                    page = httpx.get(src["url"], timeout=30, follow_redirects=True,
+                    resp = httpx.get(src["url"], timeout=30, follow_redirects=True,
                                      headers={"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
                                               "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
-                                              "Accept-Language": "en-US,en;q=0.9"}).text
-                    items = extract_products(page, src["brand"], src["category"])
+                                              "Accept-Language": "en-US,en;q=0.9"})
+                    if "products.json" in src["url"]:
+                        items = parse_shopify(resp.json())  # structured Shopify feed, no AI needed
+                    else:
+                        items = extract_products(resp.text, src["brand"], src["category"])
                     for item in items:
                         _upsert_product(db, item, src["brand"], src["category"], today)
                         counts += 1
