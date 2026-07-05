@@ -1,6 +1,7 @@
 import { api } from "@/lib/api";
 import ScopeBar from "@/components/ScopeBar";
 import ProductCard from "@/components/ProductCard";
+import SnapshotButton from "@/components/SnapshotButton";
 import CategoryChart from "./chart";
 import type { ProductT } from "@/lib/api";
 
@@ -20,10 +21,13 @@ export default async function Dashboard() {
           <h1 className="font-display text-4xl font-bold">Overview Dashboard</h1>
           <p className="text-ink/50 mt-1 text-sm">See how your profile insights change over time</p>
         </div>
-        <div className="flex gap-1 text-sm">
-          {["1 week", "1 month", "3 months", "6 months", "1 year"].map((t, i) => (
-            <span key={t} className={`px-3 py-1.5 rounded-lg border ${i === 0 ? "bg-ink text-white border-ink" : "border-ink/15"}`}>{t}</span>
-          ))}
+        <div className="flex items-center gap-4">
+          <div className="flex gap-1 text-sm">
+            {["1 week", "1 month", "3 months", "6 months", "1 year"].map((t, i) => (
+              <span key={t} className={`px-3 py-1.5 rounded-lg border ${i === 0 ? "bg-ink text-white border-ink" : "border-ink/15"}`}>{t}</span>
+            ))}
+          </div>
+          <SnapshotButton />
         </div>
       </header>
 
